@@ -24,11 +24,11 @@ const medicines = [
     image: Injection,
     name: "Injection",
   },
-  {
-    id: 4,
-    image: Syrup,
-    name: "Syrup",
-  },
+  // {
+  //   id: 4,
+  //   image: Syrup,
+  //   name: "Syrup",
+  // },
 ];
 
 const PrimaryMedicineDetails = ({
