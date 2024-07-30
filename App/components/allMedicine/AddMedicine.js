@@ -1,4 +1,5 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+
+import React, { useContext, useState } from 'react';
 import { View } from 'react-native';
 import axios from 'axios';
 import { AuthContext } from '../../utilities/auth/AuthContext';
@@ -8,110 +9,73 @@ import Medicine from '../../pages/medicine/Medicine';
 
 const AddMedicine = () => {
   const { userInfo } = useContext(AuthContext);
-  const [user, setUser] = useState({});
-  const { userId } = user;
-  // const [medicineData, setMedicineData] = useState([
-  //   userId,
-  //   medicineName,
-  //   selectedMedicine,
-  //   amount,
-  //   frequency,
-  //   times,
-  //   selectedTab,
-  //   reminder
-  // ]);
   const [medicineName, setMedicineName] = useState("");
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [amount, setAmount] = useState(0);
-  const [selectedFrequency, setSelectedFrequency] = useState("");
-  const [times, setTimes] = useState([
-    { id: 1, time: null, selectedTab: 0 },
-    { id: 2, time: null, selectedTab: 1 },
-    { id: 3, time: null, selectedTab: 0 },
+  const [frequency, setFrequency] = useState("");
+  const [doses, setDoses] = useState([
+    { time: "", mealTiming: false },
+    { time: "", mealTiming: false },
+    { time: "", mealTiming: false },
   ]);
-  const [show, setShow] = useState(false);
-  const [mode, setMode] = useState("time");
-  const [currentDoseIndex, setCurrentDoseIndex] = useState(0);
   const [reminder, setReminder] = useState("");
-  const [selectedTab, setSelectedTab] = useState(false);
+  const [medicineData, setMedicineData] = useState(null);
   const [activeView, setActiveView] = useState("PrimaryMedicineDetails");
 
-
-  /** This function used to fetch medicine data from the backend */
-
-  const fetchMedicine = useCallback(() => {
-    const headers = { "Content-Type": "application/json" };
-    const request = {
-      userId,
-      medicineName,
-      selectedMedicine,
-      amount,
-      frequency,
-      times,
-      selectedTab,
-      reminder
-    };
-    axios
-      .post('http://192.168.8.104:5001/api/medicine', request, { headers })
-      .then((response) => {
-        console.log(response.data);
-        setMedicineData(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
+  const fetchMedicine = async () => {
+    try {
+      const userId = userInfo.user?.userId;
+      console.log("User ID in fetchMedicine:", userId);
+      const response = await axios.post('http://192.168.8.100:5001/api/medicine', {
+        userId,
+        medicineName,
+        selectedMedicine,
+        amount,
+        frequency,
+       doses,
+        reminder
+      }, {
+        headers: { "Content-Type": "application/json" }
       });
-  }, []);
-
-  useEffect(() => {
-    setUser(userInfo);
-    // fetchMedicine();
-  }, [userInfo]);
+      setMedicineData(response.data);
+    } catch (error) {
+      console.error('Error adding medicine data:', error.response ? error.response.data : error.message);
+    }
+  };
 
   return (
     <View>
-      <>
-        {activeView === 'PrimaryMedicineDetails' && (
-          <PrimaryMedicineDetails
-            user={user}
-            setActiveView={setActiveView}
-            fetchMedicine={fetchMedicine}
-            medicineName={medicineName}
-            setMedicineName={setMedicineName}
-            selectedMedicine={selectedMedicine}
-            setSelectedMedicine={setSelectedMedicine}
-            amount={amount}
-            setAmount={setAmount}
-          />
-        )}
-        {activeView === 'SecondaryMedicineDetails' && (
-          <SecondaryMedicineDetails
-            user={user}
-            setActiveView={setActiveView}
-            handleFunction={fetchMedicine}
-            selectedFrequency={selectedFrequency}
-            setSelectedFrequency={setSelectedFrequency}
-            times={times}
-            setTimes={setTimes}
-            show={show}
-            setShow={setShow}
-            mode={mode}
-            setMode={setMode}
-            currentDoseIndex={currentDoseIndex}
-            setCurrentDoseIndex={setCurrentDoseIndex}
-            selectedTab={selectedTab}
-            setSelectedTab={setSelectedTab}
-            reminder={reminder}
-            setReminder={setReminder}
-          />
-        )}
-        {activeView === "Medicine" && (
-          <Medicine setActiveView={setActiveView} />
-        )}
-      </>
+      {activeView === 'PrimaryMedicineDetails' && (
+        <PrimaryMedicineDetails
+          setActiveView={setActiveView}
+          fetchMedicine={fetchMedicine}
+          medicineName={medicineName}
+          setMedicineName={setMedicineName}
+          selectedMedicine={selectedMedicine}
+          setSelectedMedicine={setSelectedMedicine}
+          amount={amount}
+          setAmount={setAmount}
+          userId={userInfo.user?.userId} 
+        />
+      )}
+      {activeView === 'SecondaryMedicineDetails' && (
+        <SecondaryMedicineDetails
+          setActiveView={setActiveView}
+          fetchMedicine={fetchMedicine}
+          frequency={frequency}
+          setFrequency={setFrequency}
+          doses={doses}
+          setDoses={setDoses}
+          reminder={reminder}
+          setReminder={setReminder}
+          userId={userInfo.user?.userId} 
+        />
+      )}
+      {activeView === "Medicine" && (
+        <Medicine setActiveView={setActiveView} />
+      )}
     </View>
   );
 };
 
 export default AddMedicine;
-
-
