@@ -1,11 +1,10 @@
-
-import React, { useContext, useState } from 'react';
-import { View } from 'react-native';
-import axios from 'axios';
-import { AuthContext } from '../../utilities/auth/AuthContext';
-import PrimaryMedicineDetails from '../../pages/addMedicine/PrimaryMedicineDetails';
-import SecondaryMedicineDetails from '../../pages/finalAddMedicine/SecondaryMedicineDetails';
-import Medicine from '../../pages/medicine/Medicine';
+import React, { useContext, useState } from "react";
+import { View } from "react-native";
+import axios from "axios";
+import { AuthContext } from "../../utilities/auth/AuthContext";
+import PrimaryMedicineDetails from "../../pages/addMedicine/PrimaryMedicineDetails";
+import SecondaryMedicineDetails from "../../pages/finalAddMedicine/SecondaryMedicineDetails";
+import Medicine from "../../pages/medicine/Medicine";
 
 const AddMedicine = () => {
   const { userInfo } = useContext(AuthContext);
@@ -19,46 +18,48 @@ const AddMedicine = () => {
     { time: "", mealTiming: false },
   ]);
   const [reminder, setReminder] = useState("");
-  const [medicineData, setMedicineData] = useState(null);
+  const [medicineData, setMedicineData] = useState({});
   const [activeView, setActiveView] = useState("PrimaryMedicineDetails");
 
   const fetchMedicine = async () => {
     try {
       const userId = userInfo.user?.userId;
-      console.log("User ID in fetchMedicine:", userId);
-      const response = await axios.post('http://192.168.8.100:5001/api/medicine', {
-        userId,
-        medicineName,
-        selectedMedicine,
-        amount,
-        frequency,
-       doses,
-        reminder
-      }, {
-        headers: { "Content-Type": "application/json" }
-      });
+      const response = await axios.post(
+        "http://192.168.8.100:5001/api/medicine",
+        {
+          userId,
+          medicineName,
+          selectedMedicine,
+          amount,
+          frequency,
+          doses,
+          reminder,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
       setMedicineData(response.data);
     } catch (error) {
-      console.error('Error adding medicine data:', error.response ? error.response.data : error.message);
+      console.error("Error adding medicine data:", error);
     }
   };
 
   return (
     <View>
-      {activeView === 'PrimaryMedicineDetails' && (
+      {activeView === "PrimaryMedicineDetails" && (
         <PrimaryMedicineDetails
           setActiveView={setActiveView}
-          fetchMedicine={fetchMedicine}
           medicineName={medicineName}
           setMedicineName={setMedicineName}
           selectedMedicine={selectedMedicine}
           setSelectedMedicine={setSelectedMedicine}
           amount={amount}
           setAmount={setAmount}
-          userId={userInfo.user?.userId} 
+          userId={userInfo.user?.userId}
         />
       )}
-      {activeView === 'SecondaryMedicineDetails' && (
+      {activeView === "SecondaryMedicineDetails" && (
         <SecondaryMedicineDetails
           setActiveView={setActiveView}
           fetchMedicine={fetchMedicine}
@@ -68,12 +69,10 @@ const AddMedicine = () => {
           setDoses={setDoses}
           reminder={reminder}
           setReminder={setReminder}
-          userId={userInfo.user?.userId} 
+          userId={userInfo.user?.userId}
         />
       )}
-      {activeView === "Medicine" && (
-        <Medicine setActiveView={setActiveView} />
-      )}
+      {activeView === "Medicine" && <Medicine setActiveView={setActiveView} />}
     </View>
   );
 };
