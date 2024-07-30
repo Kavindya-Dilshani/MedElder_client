@@ -10,49 +10,50 @@ export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const signup = (name, email, password) => {
-    setIsLoading(true);
-    return axios.post('http://192.168.8.104:5001/api/auth/signup', { name, email, password })
-      .then(res => {
-        let userInfo = res.data;
-        setUserInfo(userInfo);
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        setIsLoading(false);
-        console.log(userInfo);
-        return userInfo;  
-      })
-      .catch(e => {
-        console.log(`signup error ${e}`);
-        setIsLoading(false);
-        throw e;  
-      });
-  };
+ 
 
-  const login = (email, password) => {
+  const signup = async (name, email, password) => {
     setIsLoading(true);
-    return axios.post('http://192.168.8.104:5001/api/auth/login', { email, password })
-      .then(res => {
-        let userInfo = res.data;
-        setUserInfo(userInfo);
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        setIsLoading(false);
-        console.log(userInfo);
-        return userInfo;  
-      })
-      .catch(e => {
-        console.log(`login error ${e}`);
-        setIsLoading(false);
-        throw e;  
-      });
+    try {
+      const res = await axios.post('http://192.168.8.104:5001/api/auth/signup', { name, email, password });
+      let userInfo = res.data.user; // Extract the user part of the response
+      console.log('Signup response:', userInfo);
+      setUserInfo(userInfo);
+      await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+      setIsLoading(false);
+      return userInfo;
+    } catch (e) {
+      console.log(`Signup error: ${e}`);
+      setIsLoading(false);
+      throw e;
+    }
+  };
+  
+  const login = async (email, password) => {
+    setIsLoading(true);
+    try {
+      const res = await axios.post('http://192.168.8.104:5001/api/auth/login', { email, password });
+      let userInfo = res.data.user; // Extract the user part of the response
+      console.log('Login response:', userInfo);
+      setUserInfo(userInfo);
+      await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+      setIsLoading(false);
+      return userInfo;
+    } catch (e) {
+      console.log(`Login error: ${e}`);
+      setIsLoading(false);
+      throw e;
+    }
   };
 
   const isLoggedIn = async () => {
     try {
       let userInfo = await AsyncStorage.getItem('userInfo');
-      userInfo = JSON.parse(userInfo);
+userInfo = JSON.parse(userInfo);
 
       if (userInfo) {
         setUserInfo(userInfo);
+        console.log('User info retrieved:', userInfo);
       }
     } catch (e) {
       console.log(`is logged in error ${e}`);
