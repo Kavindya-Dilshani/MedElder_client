@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState,useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
 import axios from 'axios'; 
 import image2 from '../../assets/images/image2.png';
@@ -7,43 +7,52 @@ import image3 from '../../assets/images/image3.png';
 import image4 from '../../assets/images/image4.png';
 import image5 from '../../assets/images/image5.png';
 import Calendar from '../../components/calender/Calender';
-import {  AuthContext } from '../../utilities/auth/AuthContext';
-
+import { AuthContext } from '../../utilities/auth/AuthContext';
 
 export default function Medicine() {
   const [allMedicineData, setAllMedicineData] = useState([]);
   const { userInfo } = useContext(AuthContext);
- 
   
   const getAllMedicine = async () => {
     try {
-      const response = await axios.get('http://192.168.8.104:5001/api/medicine');
+      const response = await axios.get('http://192.168.8.100:5001/api/medicine');
       setAllMedicineData(response.data);
     }catch (error) {
       console.error('Error fetching medicine data:', error);
     }
-  }
+  };
+
   useEffect(() => {
     getAllMedicine();
   }, []);
 
+  const renderDoseDetails = (doses) => {
+    return doses.map((dose, index) => (
+      <View key={index} style={styles.doseContainer}>
+        <Text style={styles.doseTime}>{dose.time}</Text>
+        <Text style={styles.doseMealTiming}>
+          {dose.mealTiming === 0 ? 'Before meal' : 'After meal'}
+        </Text>
+      </View>
+    ));
+  };
 
   return (
     <View style={styles.MedicineContainer}>
       <View style={styles.topText}>
-        <Text style={styles.helloText}> Hello,{userInfo.user.name}</Text>
+        <Text style={styles.helloText}>Hello, {userInfo.user.name}</Text>
         <Image style={styles.image2} resizeMode="contain" source={image2} />
       </View>
-      <Text style={styles.plainText}> Let's check your plan today</Text>
+      <Text style={styles.plainText}>Let's check your plan today</Text>
       <Calendar />
       <View style={styles.middleText}>
-        <Text style={styles.takeText}> To Take</Text>
+        <Text style={styles.takeText}>To Take</Text>
         <View style={styles.middleBorder}>
-          <Text style={styles.allText}> All</Text>
+          <Text style={styles.allText}>All</Text>
           <Image style={styles.image4} resizeMode="contain" source={image4} />
         </View>
       </View>
-       <FlatList
+      <FlatList
         data={allMedicineData}
         keyExtractor={item => item._id}
         renderItem={({ item }) => (
@@ -52,17 +61,13 @@ export default function Medicine() {
               <Image style={styles.image5} resizeMode="contain" source={image5} />
             </View>
             <View style={styles.reminderText}>
-              <Text style={styles.pillText}> {item.amount} {item.selectedMedicine} {item.switchButton}</Text>
+              <Text style={styles.pillText}>{item.amount} {item.selectedMedicine}</Text>
               <Text style={styles.medicineText}>{item.medicineName}</Text>
-              <View style={styles.clockRow}>
-                <Image style={styles.image3} resizeMode="contain" source={image3} />
-                <Text style={styles.timeText}>{item.times}</Text>
-              </View>
+              {renderDoseDetails(item.doses)}
             </View>
           </View>
-         )} 
-         />
-         
+        )}
+      />
     </View>
   );
 }
@@ -115,17 +120,10 @@ const styles = StyleSheet.create({
     height: 21,
     width: 31,
   },
-  reminderColumn: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    marginTop: 11,
-    alignItems: "center"
-  },
   reminderBox: {
     backgroundColor: "#D9D9D9",
-    width: 351,
-    height: 88,
-    borderRadius: 70,
+    width: '100%',
+    borderRadius: 15,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
@@ -156,21 +154,22 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontWeight: '600',
   },
-  timeText: {
-    fontSize: 15,
-    color: '#555',
-    marginLeft: 10
-  },
-  clockRow: {
+  doseContainer: {
+    marginTop: 4,
     flexDirection: "row",
     justifyContent: "space-center",
   },
-  image3: {
-    height: 19,
-    width: 19,
-  }
+  doseTime: {
+    fontSize: 15,
+    color: '#000000',
+    marginRight: 10,
+  },
+  doseMealTiming: {
+    fontSize: 13,
+    color: '#555',
+  },
+ 
 });
-
 
 
 
