@@ -1,18 +1,25 @@
-
-import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
-import { Icon } from 'react-native-elements';
-import image6 from '../../assets/images/image6.png';
-import capsule from '../../assets/images/capsule.png';
-import Tablets from '../../assets/images/Tablets.png';
-import Injection from '../../assets/images/Injection.png';
-import Syrup from '../../assets/images/Syrup.png';
+import React from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { Icon } from "react-native-elements";
+import image6 from "../../assets/images/image6.png";
+import capsule from "../../assets/images/capsule.png";
+import Tablets from "../../assets/images/Tablets.png";
+import Injection from "../../assets/images/Injection.png";
+import Syrup from "../../assets/images/Syrup.png";
 
 const medicines = [
   {
     id: 1,
     image: capsule,
-    name: "Capsule"
+    name: "Capsule",
   },
   {
     id: 2,
@@ -33,7 +40,6 @@ const medicines = [
 
 export default function PrimaryMedicineDetails({
   setActiveView,
-  fetchMedicine,
   medicineName,
   setMedicineName,
   selectedMedicine,
@@ -42,34 +48,26 @@ export default function PrimaryMedicineDetails({
   setAmount,
   userId,
 }) {
-
- 
-
   const handleNext = async () => {
     if (!medicineName || !selectedMedicine || !amount) {
       Alert.alert("Please fill all the fields");
       return;
     } else {
-      console.log("User ID:", userId);
-      fetchMedicine();
       setActiveView("SecondaryMedicineDetails");
     }
-
-  }
-
+  };
 
   const incrementAmount = () => {
     setAmount(amount + 1);
-  }
+  };
 
   const decrementAmount = () => {
-    if (amount > 0)
-      setAmount(amount - 1);
-  }
+    if (amount > 0) setAmount(amount - 1);
+  };
 
   return (
     <View style={styles.PrimaryMedicineContainer}>
-      <Image source={image6} resizeMode='cover' style={styles.image6} />
+      <Image source={image6} resizeMode="cover" style={styles.image6} />
       <View style={styles.medicineNameInput}>
         <Text style={styles.medicineNameLabel}>Name of the Medicine</Text>
         <TextInput
@@ -90,7 +88,11 @@ export default function PrimaryMedicineDetails({
               ]}
               onPress={() => setSelectedMedicine(medicine.name)}
             >
-              <Image source={medicine.image} resizeMode='contain' style={styles.medTypeImage} />
+              <Image
+                source={medicine.image}
+                resizeMode="contain"
+                style={styles.medTypeImage}
+              />
               <Text style={styles.medTypeName}>{medicine.name}</Text>
             </TouchableOpacity>
           ))}
@@ -117,13 +119,12 @@ export default function PrimaryMedicineDetails({
   );
 }
 
-
 const styles = StyleSheet.create({
   PrimaryMedicineContainer: {
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    alignItems: "center",
+    justifyContent: "flex-start",
     padding: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   image6: {
     width: 290,
@@ -131,35 +132,35 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   medicineNameInput: {
-    width: '100%',
+    width: "100%",
     marginBottom: 20,
   },
   medicineNameLabel: {
     fontSize: 15,
     marginBottom: 10,
-    color: '#D9D9D9',
+    color: "#D9D9D9",
   },
   NameInput: {
-    width: '100%',
+    width: "100%",
     height: 47,
-    borderColor: '#D9D9D9',
+    borderColor: "#D9D9D9",
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#D9D9D9',
-    color: '#000',
+    backgroundColor: "#D9D9D9",
+    color: "#000",
   },
   medTypeContainer: {
-    width: '100%',
+    width: "100%",
   },
   medTypeLabel: {
     fontSize: 15,
     marginBottom: 12,
-    color: '#D9D9D9'
+    color: "#D9D9D9",
   },
   medTypes: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
   medTypeBox: {
     backgroundColor: "#D9D9D9",
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedMedTypeBox: {
-    backgroundColor: '#20B2AA',
+    backgroundColor: "#20B2AA",
   },
   medTypeImage: {
     width: 40,
@@ -179,23 +180,23 @@ const styles = StyleSheet.create({
   },
   medTypeName: {
     fontSize: 12,
-    color: '#000',
+    color: "#000",
   },
   medicineAmount: {
-    width: '100%',
+    width: "100%",
     marginTop: 20,
   },
   medicineAmountLabel: {
     fontSize: 15,
     marginBottom: 12,
-    color: '#D9D9D9'
+    color: "#D9D9D9",
   },
   medicineAmountContainer: {
     backgroundColor: "#D9D9D9",
     width: 351,
     height: 47,
     borderRadius: 10,
-    flexDirection: 'row',
+    flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
   },
@@ -207,9 +208,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   line: {
-    height: '50%',
+    height: "50%",
     width: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
     marginHorizontal: 10,
   },
   nextButton: {
@@ -218,31 +219,12 @@ const styles = StyleSheet.create({
     width: 278,
     height: 61,
     borderRadius: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   nextButtonText: {
     fontSize: 36,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontWeight: "600",
   },
 });
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
- 
-
-
-
