@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
     try {
       const res = await axios.post('http://192.168.8.104:5001/api/auth/signup', { name, email, password });
-      let userInfo = res.data.user; // Extract the user part of the response
+      let userInfo = res.data.user; 
       console.log('Signup response:', userInfo);
       setUserInfo(userInfo);
       await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
     try {
       const res = await axios.post('http://192.168.8.104:5001/api/auth/login', { email, password });
-      let userInfo = res.data.user; // Extract the user part of the response
+      let userInfo = res.data.user; 
       console.log('Login response:', userInfo);
       setUserInfo(userInfo);
       await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
@@ -53,7 +53,6 @@ userInfo = JSON.parse(userInfo);
 
       if (userInfo) {
         setUserInfo(userInfo);
-        console.log('User info retrieved:', userInfo);
       }
     } catch (e) {
       console.log(`is logged in error ${e}`);
