@@ -31,8 +31,8 @@ const medicines = [
   },
 ];
 
-const PrimaryMedicineDetails = ({
-  user,
+export default function PrimaryMedicineDetails({
+  setActiveView,
   fetchMedicine,
   medicineName,
   setMedicineName,
@@ -40,16 +40,17 @@ const PrimaryMedicineDetails = ({
   setSelectedMedicine,
   amount,
   setAmount,
-  setActiveView
-}) => {
+  userId,
+}) {
 
-
+ 
 
   const handleNext = async () => {
     if (!medicineName || !selectedMedicine || !amount) {
       Alert.alert("Please fill all the fields");
       return;
     } else {
+      console.log("User ID:", userId);
       fetchMedicine();
       setActiveView("SecondaryMedicineDetails");
     }
@@ -82,12 +83,12 @@ const PrimaryMedicineDetails = ({
         <View style={styles.medTypes}>
           {medicines.map((medicine) => (
             <TouchableOpacity
-              key={medicine.id}
+              key={medicine.name}
               style={[
                 styles.medTypeBox,
-                selectedMedicine === medicine.id && styles.selectedMedTypeBox,
+                selectedMedicine === medicine.name && styles.selectedMedTypeBox,
               ]}
-              onPress={() => setSelectedMedicine(medicine.id)}
+              onPress={() => setSelectedMedicine(medicine.name)}
             >
               <Image source={medicine.image} resizeMode='contain' style={styles.medTypeImage} />
               <Text style={styles.medTypeName}>{medicine.name}</Text>
@@ -229,4 +230,19 @@ const styles = StyleSheet.create({
 
 
 
-export default PrimaryMedicineDetails;
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
