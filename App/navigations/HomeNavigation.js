@@ -7,8 +7,8 @@ import Start from '../pages/start/Start';
 import RootTabs from './Tabs';
 import SignUp from '../pages/signUp/SignUp';
 import { AuthContext } from '../utilities/auth/AuthContext';
-import SecondaryMedicineDetails from '../pages/finalAddMedicine/SecondaryMedicineDetails';
-
+import Reminder from '../pages/reminder/Reminder';
+import EmergencyEvents from '../pages/emergencyEvent/EmergencyEvents';
 const Stack = createNativeStackNavigator();
 
 export default function HomeNavigation() {
@@ -27,6 +27,8 @@ export default function HomeNavigation() {
                 <>
                     <Stack.Screen name="Start" component={Start} />
                     <Stack.Screen name="RootTabs" component={RootTabs} />
+                    <Stack.Screen name="Reminder" component={Reminder} />
+                    <Stack.Screen name="EmergencyEvents" component={EmergencyEvents} />
                 </>
             )}
         </Stack.Navigator>
