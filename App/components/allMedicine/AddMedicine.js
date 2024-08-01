@@ -25,7 +25,7 @@ const AddMedicine = () => {
     try {
       const userId = userInfo.user?.userId;
       const response = await axios.post(
-        "http://192.168.8.100:5001/api/medicine",
+        "http://192.168.8.102:5001/api/medicine",
         {
           userId,
           medicineName,
@@ -40,6 +40,7 @@ const AddMedicine = () => {
         }
       );
       setMedicineData(response.data);
+      setActiveView("Medicine");
     } catch (error) {
       console.error("Error adding medicine data:", error);
     }
@@ -61,7 +62,6 @@ const AddMedicine = () => {
       )}
       {activeView === "SecondaryMedicineDetails" && (
         <SecondaryMedicineDetails
-          setActiveView={setActiveView}
           fetchMedicine={fetchMedicine}
           frequency={frequency}
           setFrequency={setFrequency}
