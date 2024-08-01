@@ -17,7 +17,6 @@ const TWICE = "twice";
 const THRICE = "thrice";
 
 export default function SecondaryMedicineDetails({
-  setActiveView,
   fetchMedicine,
   frequency,
   setFrequency,
@@ -90,7 +89,6 @@ export default function SecondaryMedicineDetails({
       return;
     } else {
       fetchMedicine();
-      setActiveView("Medicine");
     }
   };
 
