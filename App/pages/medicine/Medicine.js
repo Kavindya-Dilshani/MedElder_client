@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
+import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from "react-native";
 import axios from "axios";
 import image2 from "../../assets/images/image2.png";
 import image3 from "../../assets/images/image3.png";
@@ -7,15 +7,17 @@ import image4 from "../../assets/images/image4.png";
 import image5 from "../../assets/images/image5.png";
 import Calendar from "../../components/calender/Calender";
 import { AuthContext } from "../../utilities/auth/AuthContext";
+import VoiceReminder from '../../components/voiceReminder/VoiceReminder'; 
 
-export default function Medicine() {
+export default function Medicine({ navigation}) {
   const [allMedicineData, setAllMedicineData] = useState([]);
   const { userInfo } = useContext(AuthContext);
 
   const getAllMedicine = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.8.100:5001/api/medicine"
+        "http://192.168.8.102:5001/api/medicine"
+       
       );
       setAllMedicineData(response.data);
     } catch (error) {
@@ -49,7 +51,9 @@ export default function Medicine() {
       <View style={styles.middleText}>
         <Text style={styles.takeText}>To Take</Text>
         <View style={styles.middleBorder}>
+          <TouchableOpacity onPress={() => navigation.navigate('Reminder')}>
           <Text style={styles.allText}>All</Text>
+          </TouchableOpacity>
           <Image style={styles.image4} resizeMode="contain" source={image4} />
         </View>
       </View>
@@ -71,6 +75,10 @@ export default function Medicine() {
               </Text>
               <Text style={styles.medicineText}>{item.medicineName}</Text>
               {renderDoseDetails(item.doses)}
+              {/* <VoiceReminder
+                doses={item.doses}
+                medicineName={item.medicineName}
+              /> */}
             </View>
           </View>
         )}
@@ -178,3 +186,5 @@ const styles = StyleSheet.create({
     color: "#555",
   },
 });
+
+
