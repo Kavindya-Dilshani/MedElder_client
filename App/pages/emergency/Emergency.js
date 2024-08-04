@@ -1,12 +1,18 @@
-
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import React, { useContext } from "react";
 import image8 from "../../assets/images/image8.png";
 import image9 from "../../assets/images/image9.png";
 import { AuthContext } from "../../utilities/auth/AuthContext";
 import EmergencyConfig from "../../config/EmergencyConfig";
 
-export default function Emergency({ navigation}) {
+export default function Emergency({ navigation }) {
   const { userInfo } = useContext(AuthContext);
 
   return (
@@ -30,17 +36,20 @@ export default function Emergency({ navigation}) {
       </View>
       <View style={styles.EmergencyCardContainer}>
         {EmergencyConfig.emergencyList.map((item, index) => (
-          <TouchableOpacity onPress={() => navigation.navigate('EmergencyEvents')}>
-          <View key={index} style={styles.emergencyCard}>
-            <Image
-              style={styles.EmergencyCategoryImage}
-              resizeMode="contain"
-              source={item.image}
-            />
-            <Text style={styles.EmergencyCategoryTitle}>
-              {item.EmergencyCategoryTitle}
-            </Text>
-          </View>
+        <TouchableOpacity
+        key={index}
+        onPress={() => navigation.navigate(item.route, { details: item.details })}
+      >
+            <View key={index} style={styles.emergencyCard}>
+              <Image
+                style={styles.EmergencyCategoryImage}
+                resizeMode="contain"
+                source={item.image}
+              />
+              <Text style={styles.EmergencyCategoryTitle}>
+                {item.EmergencyCategoryTitle}
+              </Text>
+            </View>
           </TouchableOpacity>
         ))}
       </View>
@@ -109,8 +118,8 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     marginBottom: 35,
     alignItems: "center",
-    width:116,
-    height:139,
+    width: 116,
+    height: 139,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
