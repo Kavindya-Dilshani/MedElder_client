@@ -9,6 +9,7 @@ import SignUp from '../pages/signUp/SignUp';
 import { AuthContext } from '../utilities/auth/AuthContext';
 import Reminder from '../pages/reminder/Reminder';
 import EmergencyEvents from '../pages/emergencyEvent/EmergencyEvents';
+
 const Stack = createNativeStackNavigator();
 
 export default function HomeNavigation() {
