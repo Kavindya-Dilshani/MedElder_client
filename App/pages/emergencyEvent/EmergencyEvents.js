@@ -19,11 +19,13 @@ const EmergencyEvents = ({ route, navigation }) => {
             style={styles.leftIcon}
           />
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("CallHelp")}>
         <Image
           style={styles.EmergencyEventsImage}
           resizeMode="contain"
           source={image8}
         />
+        </TouchableOpacity>
       </View>
       <Text style={styles.emergencyEventHeading}>{details.heading}</Text>
       <Image
@@ -62,7 +64,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     position: "absolute",
-    // top: 0,
     width: "100%",
     paddingHorizontal: 10,
     paddingTop: 30, 
