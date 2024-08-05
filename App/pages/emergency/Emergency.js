@@ -6,7 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import image8 from "../../assets/images/image8.png";
 import image9 from "../../assets/images/image9.png";
 import { AuthContext } from "../../utilities/auth/AuthContext";
@@ -14,6 +14,21 @@ import EmergencyConfig from "../../config/EmergencyConfig";
 
 export default function Emergency({ navigation }) {
   const { userInfo } = useContext(AuthContext);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = () => {
+    const foundItem = EmergencyConfig.emergencyList.find((item) =>
+      item.EmergencyCategoryTitle.toLowerCase().includes(
+        searchQuery.toLowerCase()
+      )
+    );
+    if (foundItem) {
+      navigation.navigate(foundItem.route, { details: foundItem.details });
+    } else {
+      alert("No matching emergency category found");
+    }
+    setSearchQuery("");
+  };
 
   return (
     <View style={styles.emergencyContainer}>
@@ -21,25 +36,34 @@ export default function Emergency({ navigation }) {
         <Text style={styles.emergencyHelloText}>
           Hello, {userInfo.user.name}
         </Text>
-        <Image style={styles.image8} resizeMode="contain" source={image8} />
+        <TouchableOpacity onPress={() => navigation.navigate("CallHelp")}>
+          <Image style={styles.image8} resizeMode="contain" source={image8} />
+        </TouchableOpacity>
       </View>
       <Text style={styles.emergencyPlainText}>Emergency info at hand</Text>
       <View style={styles.searchBar}>
         <View style={styles.searchImage}>
-          <Image style={styles.image9} resizeMode="contain" source={image9} />
+          <TouchableOpacity onPress={handleSearch}>
+            <Image style={styles.image9} resizeMode="contain" source={image9} />
+          </TouchableOpacity>
           <TextInput
             style={styles.SearchNameInput}
             placeholder="Search"
             placeholderTextColor={"#000"}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={handleSearch}
           />
         </View>
       </View>
       <View style={styles.EmergencyCardContainer}>
         {EmergencyConfig.emergencyList.map((item, index) => (
-        <TouchableOpacity
-        key={index}
-        onPress={() => navigation.navigate(item.route, { details: item.details })}
-      >
+          <TouchableOpacity
+            key={index}
+            onPress={() =>
+              navigation.navigate(item.route, { details: item.details })
+            }
+          >
             <View key={index} style={styles.emergencyCard}>
               <Image
                 style={styles.EmergencyCategoryImage}
