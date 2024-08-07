@@ -103,6 +103,7 @@ export default function RootTabs() {
                 )
             }} />
             <Tabs.Screen name="Location" component={Location} options={{
+                tabBarStyle: { display: 'none' },
                 tabBarIcon: ({ focused }) => (
                     <View style={{ alignItems: "center", justifyContent: "center", top: 10 }}>
                         <Image source={LocationIcon}
