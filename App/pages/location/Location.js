@@ -1,3 +1,4 @@
+
 import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
@@ -5,7 +6,6 @@ import MapViewStyle from "../../utilities/MapViewStyle.json";
 import { UserLocationContext } from "../../context/UserLocationContext";
 import image21 from "../../assets/images/image21.png";
 import { AuthContext } from "../../utilities/auth/AuthContext";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import GlobalApi from "../../utilities/GlobalApi";
 import PlaceListView from "../../components/placeListView/PlaceListView";
@@ -26,9 +26,26 @@ export default function Location({ searchedLocation }) {
 
   const GetNearBySearchPlace = () => {
     GlobalApi.nearByPlace(location.latitude, location.longitude)
-      .then((resp) => {
+      .then(async (resp) => {
         console.log(resp.data.results);
-        setPlaceList(resp.data.results);
+        const places = resp.data.results;
+        const updatedPlaces = await Promise.all(
+          places.map(async (place) => {
+            const distanceResp = await GlobalApi.getDistanceAndDuration(
+              location.latitude,
+              location.longitude,
+              place.geometry.location.lat,
+              place.geometry.location.lng
+            );
+            const distanceData = distanceResp.data.rows[0].elements[0];
+            return {
+              ...place,
+              distance: distanceData.distance.text,
+              duration: distanceData.duration.text,
+            };
+          })
+        );
+        setPlaceList(updatedPlaces);
       })
       .catch((err) => {
         console.error("Error fetching nearby places:", err);
@@ -45,7 +62,6 @@ export default function Location({ searchedLocation }) {
               fetchDetails={true}
               enablePoweredByContainer={false}
               onPress={(data, details = null) => {
-                console.log(data, details);
                 const location = details?.geometry?.location;
                 if (location) {
                   setLocation({
