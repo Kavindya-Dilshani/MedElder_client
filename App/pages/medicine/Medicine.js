@@ -11,12 +11,12 @@ import VoiceReminder from '../../components/voiceReminder/VoiceReminder';
 
 export default function Medicine({ navigation}) {
   const [allMedicineData, setAllMedicineData] = useState([]);
-  const { userInfo } = useContext(AuthContext);
+  const  {userInfo}  = useContext(AuthContext);
 
   const getAllMedicine = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.8.102:5001/api/medicine"
+        "http://192.168.8.105:5001/api/medicine"
        
       );
       setAllMedicineData(response.data);
@@ -28,7 +28,8 @@ export default function Medicine({ navigation}) {
   useEffect(() => {
     getAllMedicine();
   }, []);
-
+  
+  
   const renderDoseDetails = (doses) => {
     return doses.map((dose, index) => (
       <View key={index} style={styles.doseContainer}>
@@ -40,10 +41,11 @@ export default function Medicine({ navigation}) {
     ));
   };
 
+ 
   return (
     <View style={styles.MedicineContainer}>
       <View style={styles.topText}>
-        <Text style={styles.helloText}>Hello, {userInfo.user.name}</Text>
+        <Text style={styles.helloText}> Hello,{userInfo.name}</Text>
         <Image style={styles.image2} resizeMode="contain" source={image2} />
       </View>
       <Text style={styles.plainText}>Let's check your plan today</Text>
