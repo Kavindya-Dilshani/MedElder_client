@@ -34,7 +34,7 @@ export default function Emergency({ navigation }) {
     <View style={styles.emergencyContainer}>
       <View style={styles.emergencyTopText}>
         <Text style={styles.emergencyHelloText}>
-          Hello, {userInfo.user.name}
+          Hello, {userInfo.name}
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate("CallHelp")}>
           <Image style={styles.image8} resizeMode="contain" source={image8} />
