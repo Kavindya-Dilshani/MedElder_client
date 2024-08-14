@@ -11,6 +11,7 @@ import Reminder from '../pages/reminder/Reminder';
 import EmergencyEvents from '../pages/emergencyEvent/EmergencyEvents';
 import CallHelp from '../pages/callHelp/CallHelp';
 
+
 const Stack = createNativeStackNavigator();
 
 export default function HomeNavigation() {
@@ -37,6 +38,12 @@ export default function HomeNavigation() {
         </Stack.Navigator>
     );
 }
+
+
+
+
+
+
 
 
 
