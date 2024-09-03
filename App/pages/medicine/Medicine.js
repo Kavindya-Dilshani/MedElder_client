@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import axios from "axios";
 import image2 from "../../assets/images/image2.png";
 import image3 from "../../assets/images/image3.png";
@@ -7,29 +14,96 @@ import image4 from "../../assets/images/image4.png";
 import image5 from "../../assets/images/image5.png";
 import Calendar from "../../components/calender/Calender";
 import { AuthContext } from "../../utilities/auth/AuthContext";
-import VoiceReminder from '../../components/voiceReminder/VoiceReminder'; 
+import Reminder from "../reminder/Reminder";
+import moment from "moment-timezone";
 
-export default function Medicine({ navigation}) {
+export default function Medicine({ navigation }) {
   const [allMedicineData, setAllMedicineData] = useState([]);
-  const  {userInfo}  = useContext(AuthContext);
+  const { userInfo } = useContext(AuthContext);
+  const [showReminder, setShowReminder] = useState(false);
+  const [reminderData, setReminderData] = useState([]);
 
   const getAllMedicine = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.8.105:5001/api/medicine"
-       
+        "http://192.168.8.100:5001/api/medicine"
       );
-      setAllMedicineData(response.data);
+      const filteredReminderData = getItemsForReminder(response?.data);
+
+      if (filteredReminderData?.length > 0) {
+        setReminderData(filteredReminderData);
+      }
+      setAllMedicineData(response?.data);
+
+      if (filteredReminderData.length > 0) setShowReminder(true);
     } catch (error) {
       console.error("Error fetching medicine data:", error);
     }
   };
 
+
+  
+  const getItemsForReminder = (responseData) => {
+    if (responseData?.length > 0) {
+      const timeZone = "Asia/Colombo";
+      const currentTime = moment().tz(timeZone);
+
+      const filteredReminderData = responseData.filter((item) => {
+        return item.doses.some((dose) => {
+          // Parsing the dose time
+          const [time, modifier] = dose.time.split(" ");
+          let [hours, minutes] = time.split(":");
+
+          hours = parseInt(hours);
+          minutes = parseInt(minutes);
+
+          // Handle AM/PM
+          if (modifier === "PM" && hours !== 12) {
+            hours += 12;
+          } else if (modifier === "AM" && hours === 12) {
+            hours = 0; // Handle midnight case (12:00 AM is 00:00 in 24-hour time)
+          }
+
+          // Create a moment instance for dose time in the specified time zone
+          const doseTime = moment().tz(timeZone);
+          doseTime.set({ hours, minutes, seconds: 0, milliseconds: 0 });
+
+          // Add 10 minutes to the dose time
+          const tenMinutesLater = doseTime.clone().add(10, "minutes");
+
+          // Compare doseTime with currentTime and tenMinutesLater
+          return (
+            currentTime.isSameOrAfter(doseTime) &&
+            currentTime.isSameOrBefore(tenMinutesLater)
+          );
+        });
+      });
+
+      const transformedReminderData =
+        transformReminderData(filteredReminderData);
+      return transformedReminderData;
+    } else {
+      return [];
+    }
+  };
+
+  const transformReminderData = (reminderData) => {
+    // Transform the data
+    const transformedReminderData = reminderData.flatMap((medicine) =>
+      medicine.doses.map((dose) => ({
+        doseId: dose._id,
+        time: dose.time,
+        medicineId: medicine._id,
+        medicineName: medicine.medicineName,
+      }))
+    );
+    return transformedReminderData;
+  };
+
   useEffect(() => {
     getAllMedicine();
   }, []);
-  
-  
+
   const renderDoseDetails = (doses) => {
     return doses.map((dose, index) => (
       <View key={index} style={styles.doseContainer}>
@@ -41,8 +115,12 @@ export default function Medicine({ navigation}) {
     ));
   };
 
- 
-  return (
+
+  const handleHideReminder = () => {
+    setShowReminder(false);
+  };
+
+  return !showReminder ? (
     <View style={styles.MedicineContainer}>
       <View style={styles.topText}>
         <Text style={styles.helloText}> Hello,{userInfo.name}</Text>
@@ -53,8 +131,8 @@ export default function Medicine({ navigation}) {
       <View style={styles.middleText}>
         <Text style={styles.takeText}>To Take</Text>
         <View style={styles.middleBorder}>
-          <TouchableOpacity onPress={() => navigation.navigate('Reminder')}>
-          <Text style={styles.allText}>All</Text>
+          <TouchableOpacity>
+            <Text style={styles.allText}>All</Text>
           </TouchableOpacity>
           <Image style={styles.image4} resizeMode="contain" source={image4} />
         </View>
@@ -77,15 +155,17 @@ export default function Medicine({ navigation}) {
               </Text>
               <Text style={styles.medicineText}>{item.medicineName}</Text>
               {renderDoseDetails(item.doses)}
-              {/* <VoiceReminder
-                doses={item.doses}
-                medicineName={item.medicineName}
-              /> */}
             </View>
           </View>
         )}
       />
     </View>
+  ) : (
+    <Reminder
+      navigation={navigation}
+      hideReminder={handleHideReminder}
+      reminderData={reminderData}
+    />
   );
 }
 
@@ -161,12 +241,10 @@ const styles = StyleSheet.create({
   },
   reminderText: {
     flex: 1,
-    
   },
   pillText: {
     fontSize: 17,
     fontWeight: "700",
-    
   },
   medicineText: {
     fontSize: 18,
@@ -188,5 +266,4 @@ const styles = StyleSheet.create({
     color: "#555",
   },
 });
-
 
