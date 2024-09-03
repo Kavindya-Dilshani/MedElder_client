@@ -99,9 +99,9 @@ export default function SignUp({ navigation}) {
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                   {password.length > 0 && (
                     showPassword ? (
-                      <Feather name='eye-off' color="black" size={18} style={styles.SignUpIcon} />
-                    ) : (
                       <Feather name='eye' color="black" size={18} style={styles.SignUpIcon} />
+                    ) : (
+                      <Feather name='eye-off' color="black" size={18} style={styles.SignUpIcon} />
                     )
                   )}
                 </TouchableOpacity>
