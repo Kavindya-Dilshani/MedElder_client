@@ -5,9 +5,11 @@ import image16 from "../assets/images/image16.png";
 import image14 from "../assets/images/image14.png";
 import image15 from "../assets/images/image15.png";
 import image17 from "../assets/images/image17.png";
-import image18 from "../assets/images/image18.jpg";
-import image19 from "../assets/images/image19.jpeg";
-import image20 from "../assets/images/image20.jpeg";
+import image18 from "../assets/images/image18.png";
+import image19 from "../assets/images/image19.jpg";
+import image20 from "../assets/images/image20.png";
+import image23 from "../assets/images/image23.png";
+import image24 from "../assets/images/image24.jpg";
 
 const emergencyList = [
   {
@@ -36,7 +38,7 @@ const emergencyList = [
     route: "EmergencyEvents",
     details: {
       heading: "Strokes",
-      image: image17,
+      image: image18,
       steps: [
         "Call emergency services",
         "Record the time symptoms started",
@@ -55,7 +57,7 @@ const emergencyList = [
     route: "EmergencyEvents",
     details: {
       heading: "Allergic",
-      image: image17,
+      image: image19,
       steps: [
         "Administer Epinephrine as per the instructions",
         "Call Emergency Services",
@@ -72,7 +74,7 @@ const emergencyList = [
     route: "EmergencyEvents",
     details: {
       heading: "Choking",
-      image: image17,
+      image: image20,
       steps: [
         "Assess the situation",
         "Perform Self-Administered Heimlich Maneuver",
@@ -90,7 +92,7 @@ const emergencyList = [
     route: "EmergencyEvents",
     details: {
       heading: "Bleeding",
-      image: image17,
+      image: image23,
       steps: [
         "Assess the situation",
         "Apply direct pressure",
@@ -108,7 +110,7 @@ const emergencyList = [
     route: "EmergencyEvents",
     details: {
       heading: "Gas Leaks",
-      image: image17,
+      image: image24,
       steps: [
         "Evacuate the area",
         "Do not light matches or use flames",
