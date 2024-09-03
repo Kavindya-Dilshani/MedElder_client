@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   image6: {
     width: 290,
-    height: 160,
+    height: 220,
     marginBottom: 15,
   },
   medicineNameInput: {
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   nextButton: {
-    marginTop: 20,
+    marginTop: 40,
     backgroundColor: "#205278",
     width: 278,
     height: 61,

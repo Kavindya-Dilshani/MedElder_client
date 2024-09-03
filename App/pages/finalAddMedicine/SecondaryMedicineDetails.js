@@ -1,3 +1,4 @@
+
 import {
   View,
   Text,
@@ -83,14 +84,26 @@ export default function SecondaryMedicineDetails({
     setDoses(newDoses);
   };
 
+  // const handleSave = async () => {
+  //   if (!frequency || !doses) {
+  //     Alert.alert("Please fill all the fields");
+  //     return;
+  //   } else {
+  //     fetchMedicine();
+      
+  //   }
+  // };
   const handleSave = async () => {
     if (!frequency || !doses) {
       Alert.alert("Please fill all the fields");
       return;
     } else {
-      fetchMedicine();
+      await fetchMedicine();
+      console.log("Medicine page should be active now");
+      console.log("Active View:", activeView); // Debug the current view
     }
   };
+  
 
   const handleFrequencyChange = (text) => {
     const lowerCaseText = text.toLowerCase();
