@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
     try {
       const res = await axios.post(
-        "http://192.168.8.105:5001/api/auth/signup",
+        "http://192.168.8.100:5001/api/auth/signup",
         { name, email, password }
       );
       let userInfo = res.data.user;
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setIsLoading(true);
     try {
-      const res = await axios.post("http://192.168.8.105:5001/api/auth/login", {
+      const res = await axios.post("http://192.168.8.100:5001/api/auth/login", {
         email,
         password,
       });
