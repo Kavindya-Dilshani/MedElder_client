@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { MaterialIcons } from "react-native-vector-icons";
 import { AuthContext } from "../../utilities/auth/AuthContext";
 import UpdateImage from "../../components/updateImage/UpdateImage";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Setting = ({ navigation }) => {
   const { userInfo ,logout} = useContext(AuthContext);
@@ -20,14 +21,14 @@ const Setting = ({ navigation }) => {
           style={styles.rowItem}
           onPress={() => navigation.navigate("UpdateProfile")}
         >
-          <MaterialIcons name="account-circle" size={24} color="#20B2AA" />
-          <Text style={styles.rowText}>Account</Text>
+          <AntDesign name="infocirlce" size={24} color="#20B2AA" />
+          <Text style={styles.rowText}>About App</Text>
           <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
       <View style={styles.row}>
-        <TouchableOpacity style={styles.rowItem}>
+        <TouchableOpacity style={styles.rowItem} onPress={() => navigation.navigate("MyProgress")}>
           <MaterialIcons name="bar-chart" size={24} color="#20B2AA" />
           <Text style={styles.rowText}>My Progress</Text>
           <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
