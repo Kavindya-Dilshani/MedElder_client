@@ -3,11 +3,10 @@ import React, { useState , useContext} from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
 import Feather from 'react-native-vector-icons/Feather';
 import Error from 'react-native-vector-icons/MaterialIcons';
-import { Fontisto } from "@expo/vector-icons";
-import axios from 'axios';
 import { AuthContext } from "../../utilities/auth/AuthContext";
 import Spinner from 'react-native-loading-spinner-overlay';
 
+// Define the SignUp component
 export default function SignUp({ navigation}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,18 +15,21 @@ export default function SignUp({ navigation}) {
   const [passwordVerify, setPasswordVerify] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Get the isLoading and signup functions from the AuthContext
   const {isLoading, signup} = useContext(AuthContext);
 
+  // Handle form submission
   const handleSubmit =  () => {
     if (!name || !emailVerify || !passwordVerify) {
       Alert.alert("Please fill all the fields");
       return;
     }
 
+    // Call the signup function with the user's name, email, and password
     signup(name,email, password)
     .then(() => {
       Alert.alert("Registered Successfully!!");
-      navigation.navigate('Start');
+      navigation.navigate('Login');
     })
     .catch(e => {
       console.log(e);
@@ -35,18 +37,21 @@ export default function SignUp({ navigation}) {
     });
 };
 
+// Handle email input
   const handleEmail = (emailVar) => {
     setEmail(emailVar);
     const isValid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(emailVar);
     setEmailVerify(isValid);
   };
 
+  // Handle password input
   const handlePassword = (passwordVar) => {
     setPassword(passwordVar);
     const isValidPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/.test(passwordVar);
     setPasswordVerify(isValidPassword);
   };
 
+  // Render the SignUp form
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} keyboardDismissMode="on-drag">
       <View style={styles.headingContainer}>

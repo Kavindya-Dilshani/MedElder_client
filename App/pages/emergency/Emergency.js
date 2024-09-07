@@ -13,9 +13,12 @@ import { AuthContext } from "../../utilities/auth/AuthContext";
 import EmergencyConfig from "../../config/EmergencyConfig";
 
 export default function Emergency({ navigation }) {
+  // Get the user info from the AuthContext
   const { userInfo } = useContext(AuthContext);
+
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Function to handle search
   const handleSearch = () => {
     const foundItem = EmergencyConfig.emergencyList.find((item) =>
       item.EmergencyCategoryTitle.toLowerCase().includes(
@@ -33,9 +36,7 @@ export default function Emergency({ navigation }) {
   return (
     <View style={styles.emergencyContainer}>
       <View style={styles.emergencyTopText}>
-        <Text style={styles.emergencyHelloText}>
-          Hello, {userInfo.name}
-        </Text>
+        <Text style={styles.emergencyHelloText}>Hello, {userInfo.name}</Text>
         <TouchableOpacity onPress={() => navigation.navigate("CallHelp")}>
           <Image style={styles.image8} resizeMode="contain" source={image8} />
         </TouchableOpacity>

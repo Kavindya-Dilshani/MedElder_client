@@ -3,19 +3,20 @@ import React, { useContext } from "react";
 import { MaterialIcons } from "react-native-vector-icons";
 import { AuthContext } from "../../utilities/auth/AuthContext";
 import UpdateImage from "../../components/updateImage/UpdateImage";
-import AntDesign from '@expo/vector-icons/AntDesign';
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const Setting = ({ navigation }) => {
-  const { userInfo ,logout} = useContext(AuthContext);
+  // Get the user info and logout function from the AuthContext
+  const { userInfo, logout } = useContext(AuthContext);
 
   return (
     <View style={styles.settingContainer}>
       <Text style={styles.settingTitle}>Settings</Text>
-      <UpdateImage/>
-        <View style={styles.profileDetails}>
-          <Text style={styles.profileName}>{userInfo.name}</Text>
-          <Text style={styles.profileEmail}>{userInfo.email}</Text>
-        </View>
+      <UpdateImage />
+      <View style={styles.profileDetails}>
+        <Text style={styles.profileName}>{userInfo.name}</Text>
+        <Text style={styles.profileEmail}>{userInfo.email}</Text>
+      </View>
       <View style={styles.row}>
         <TouchableOpacity
           style={styles.rowItem}
@@ -28,7 +29,10 @@ const Setting = ({ navigation }) => {
       </View>
 
       <View style={styles.row}>
-        <TouchableOpacity style={styles.rowItem} onPress={() => navigation.navigate("MyProgress")}>
+        <TouchableOpacity
+          style={styles.rowItem}
+          onPress={() => navigation.navigate("MyProgress")}
+        >
           <MaterialIcons name="bar-chart" size={24} color="#20B2AA" />
           <Text style={styles.rowText}>My Progress</Text>
           <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
@@ -42,10 +46,13 @@ const Setting = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.row}>
-        <TouchableOpacity style={styles.rowItem} onPress={() => {
-            logout(); 
-            navigation.navigate("SignUp"); 
-          }}>
+        <TouchableOpacity
+          style={styles.rowItem}
+          onPress={() => {
+            logout();
+            navigation.navigate("Home");
+          }}
+        >
           <MaterialIcons name="logout" size={24} color="#20B2AA" />
           <Text style={styles.rowText}>Log Out</Text>
           <MaterialIcons name="keyboard-arrow-right" size={24} color="black" />
@@ -88,7 +95,7 @@ const styles = StyleSheet.create({
   profileEmail: {
     fontSize: 16,
     color: "gray",
-    marginBottom:20,
+    marginBottom: 20,
   },
   row: {
     marginBottom: 15,

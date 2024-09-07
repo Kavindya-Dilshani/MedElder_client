@@ -20,6 +20,7 @@ const GetLocation = () => {
   const [placeList, setPlaceList] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState([]);
 
+  // Function to get the user's current location
   const getUserCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -34,16 +35,19 @@ const GetLocation = () => {
     });
   };
 
+  // Use the useEffect hook to get the user's current location
   useEffect(() => {
     getUserCurrentLocation();
   }, []);
 
+  // Use the useEffect hook to fetch nearby places when the location changes
   useEffect(() => {
     if (location?.latitude && location?.longitude) {
       GetNearBySearchPlace();
     }
   }, [location]);
 
+  // Function to fetch nearby places
   const GetNearBySearchPlace = () => {
     GlobalApi.nearByPlace(location.latitude, location.longitude)
       .then(async (resp) => {

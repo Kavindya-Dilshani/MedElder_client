@@ -1,4 +1,3 @@
-
 import {
   View,
   Text,
@@ -11,6 +10,7 @@ import React, { useState, useEffect } from "react";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Calendar from "../../components/calender/Calender";
 import { format } from "date-fns";
+import axios from "axios";
 
 // Define frequency constants
 const ONCE = "once";
@@ -18,7 +18,7 @@ const TWICE = "twice";
 const THRICE = "thrice";
 
 export default function SecondaryMedicineDetails({
-  fetchMedicine,
+  setActiveView,
   frequency,
   setFrequency,
   doses,
@@ -26,11 +26,43 @@ export default function SecondaryMedicineDetails({
   reminder,
   setReminder,
   userId,
+  medicineName,
+  selectedMedicine,
+  amount,
+  navigation
 }) {
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState("time");
   const [currentDoseIndex, setCurrentDoseIndex] = useState(0);
 
+  // Function to fetch medicine data
+  const saveMedicine = async () => {
+    try {
+      const response = await axios.post(
+        "http://192.168.8.104:5001/api/medicine",
+        {
+          userId,
+          medicineName,
+          selectedMedicine,
+          amount,
+          frequency,
+          doses,
+          reminder,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      // // Ensure setActiveView is called after setting data
+      setActiveView("PrimaryMedicineDetails");
+      navigation.navigate('Medicine');
+      console.log("Medicine data saved:", response.data);
+    } catch (error) {
+      console.error("Error adding medicine data:", error);
+    }
+  };
+
+  // Use the useEffect hook to initialize doses based on frequency
   useEffect(() => {
     const initializeDoses = () => {
       let numDoses = 0;
@@ -58,6 +90,7 @@ export default function SecondaryMedicineDetails({
     initializeDoses();
   }, [frequency]);
 
+  // Function to handle time selection
   const onChange = (selectedTime) => {
     const formattedTime = format(selectedTime, "h:mm a");
     const newDoses = doses.map((dose, idx) =>
@@ -67,6 +100,7 @@ export default function SecondaryMedicineDetails({
     setShow(false);
   };
 
+  // Function to handle day selection
   const handleDaySelect = (selectedDay) => {
     setReminder(selectedDay);
   };
@@ -77,6 +111,7 @@ export default function SecondaryMedicineDetails({
     setCurrentDoseIndex(index);
   };
 
+  // Function to handle switch button press
   const handleSwitchButtonPress = (doseIndex, mealTiming) => {
     const newDoses = doses.map((dose, idx) =>
       idx === doseIndex ? { ...dose, mealTiming } : dose
@@ -84,27 +119,20 @@ export default function SecondaryMedicineDetails({
     setDoses(newDoses);
   };
 
-  // const handleSave = async () => {
-  //   if (!frequency || !doses) {
-  //     Alert.alert("Please fill all the fields");
-  //     return;
-  //   } else {
-  //     fetchMedicine();
-      
-  //   }
-  // };
   const handleSave = async () => {
     if (!frequency || !doses) {
       Alert.alert("Please fill all the fields");
       return;
     } else {
-      await fetchMedicine();
-      console.log("Medicine page should be active now");
-      console.log("Active View:", activeView); // Debug the current view
+      try {
+        await saveMedicine();
+      } catch (error) {
+        console.error("Error saving medicine data:", error);
+      }
     }
   };
-  
 
+  // Function to handle frequency change
   const handleFrequencyChange = (text) => {
     const lowerCaseText = text.toLowerCase();
     if (lowerCaseText === ONCE) {
@@ -118,6 +146,7 @@ export default function SecondaryMedicineDetails({
     }
   };
 
+  // Function to render dose time picker
   const renderDoseTimePicker = (index, enabled) => {
     const doseLabels = ["First", "Second", "Third"];
     const doseTime = doses[index]?.time;

@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 export default function Home({ navigation }) {
     return (
         <View>
-            <TouchableOpacity onPress={() => navigation.navigate('login')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                 <Text style={styles.homeText}>Med Elder</Text>
             </TouchableOpacity>
         </View>

@@ -1,11 +1,18 @@
-
 import React, { useContext, useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from "react-native";
-import Feather from 'react-native-vector-icons/Feather';
-import Error from 'react-native-vector-icons/MaterialIcons';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from "react-native";
+import Feather from "react-native-vector-icons/Feather";
+import Error from "react-native-vector-icons/MaterialIcons";
 import { Fontisto } from "@expo/vector-icons";
 import { AuthContext } from "../../utilities/auth/AuthContext";
-import Spinner from 'react-native-loading-spinner-overlay';
+import Spinner from "react-native-loading-spinner-overlay";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -14,39 +21,50 @@ export default function Login({ navigation }) {
   const [passwordVerify, setPasswordVerify] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Get the login function from the AuthContext
   const { isLoading, login } = useContext(AuthContext);
 
+  // Function to handle login
   const handleLogin = async () => {
     if (!emailVerify || !passwordVerify) {
       Alert.alert("Please fill all the fields");
       return;
     }
     login(email, password)
-    .then(() => {
-      Alert.alert("Login Successfully!!");
-      navigation.navigate("Start");
-    })
-    .catch(e => {
-      console.log(e);
-      Alert.alert("An error occurred. Please check your connection & try again!");
-    });
+      .then(() => {
+        Alert.alert("Login Successfully!!");
+        navigation?.navigate("Start");
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert(
+          "An error occurred. Please check your connection & try again!"
+        );
+      });
   };
 
-
+  // Function to handle email input
   function handleEmail(emailVar) {
     setEmail(emailVar);
     const isValid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(emailVar);
     setEmailVerify(isValid);
   }
 
+  // Function to handle password input
   function handlePassword(passwordVar) {
     setPassword(passwordVar);
-    const isValidPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/.test(passwordVar);
+    const isValidPassword =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/.test(
+        passwordVar
+      );
     setPasswordVerify(isValidPassword);
   }
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps={"always"}>
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps={"always"}
+    >
       <View style={styles.loginHeadingContainer}>
         <View style={styles.loginHeadTexts}>
           <Text style={styles.loginWelcomeText}>Welcome Back</Text>
@@ -62,9 +80,19 @@ export default function Login({ navigation }) {
                   value={email}
                 />
                 {email.length < 1 ? null : emailVerify ? (
-                  <Feather name='check-circle' color="green" size={18} style={styles.loginIcon} />
+                  <Feather
+                    name="check-circle"
+                    color="green"
+                    size={18}
+                    style={styles.loginIcon}
+                  />
                 ) : (
-                  <Error name="error" color="red" size={18} style={styles.loginIcon} />
+                  <Error
+                    name="error"
+                    color="red"
+                    size={18}
+                    style={styles.loginIcon}
+                  />
                 )}
               </View>
               {email.length < 1 ? null : emailVerify ? null : (
@@ -82,18 +110,28 @@ export default function Login({ navigation }) {
                   onChangeText={handlePassword}
                   value={password}
                 />
-                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                >
                   {password.length < 1 ? null : !showPassword ? (
-                    <Feather name='eye' color="black" size={18} style={styles.loginIcon} />
+                    <Feather
+                      name="eye-off"
+                      color="black"
+                      size={18}
+                      style={styles.loginIcon}
+                    />
                   ) : (
-                    <Feather name='eye-off' color="black" size={18} style={styles.loginIcon} />
+                    <Feather
+                      name="eye"
+                      color="black"
+                      size={18}
+                      style={styles.loginIcon}
+                    />
                   )}
                 </TouchableOpacity>
               </View>
               {password.length < 1 ? null : passwordVerify ? null : (
-                <Text style={styles.errorText}>
-                  Invalid password format
-                </Text>
+                <Text style={styles.errorText}>Invalid password format</Text>
               )}
             </View>
             <TouchableOpacity>
@@ -117,22 +155,10 @@ export default function Login({ navigation }) {
               marginVertical: 15,
             }}
           />
-          <TouchableOpacity
-            style={styles.googleButtonContainer}
-          >
-            <Fontisto name="google" color="white" size={20} marginLeft={5} padding={3} />
-            <Text style={styles.googleButtonText}>
-              Sign In With Google
-            </Text>
-          </TouchableOpacity>
           <View style={styles.loginExtraView}>
             <Text style={{ fontSize: 16 }}>Don't have an account?</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("SignUp")}
-            >
-              <Text
-                style={{ fontSize: 16, color: "#20B2AA", marginLeft: 7 }}
-              >
+            <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+              <Text style={{ fontSize: 16, color: "#20B2AA", marginLeft: 7 }}>
                 Sign Up
               </Text>
             </TouchableOpacity>
@@ -186,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   loginInputContainer: {
-    position: 'relative',
+    position: "relative",
   },
   loginTextInput: {
     height: 42,
@@ -196,18 +222,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#a8efeb",
     fontSize: 17,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   loginIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
     bottom: 10,
   },
   errorText: {
     marginLeft: 10,
     marginTop: 5,
-    color: 'red',
+    color: "red",
   },
   loginButton: {
     marginTop: 18,
@@ -249,4 +275,3 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
 });
-

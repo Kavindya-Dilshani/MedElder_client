@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,104 +8,85 @@ import {
   TouchableOpacity,
 } from "react-native";
 import axios from "axios";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import image2 from "../../assets/images/image2.png";
-import image3 from "../../assets/images/image3.png";
 import image4 from "../../assets/images/image4.png";
 import image5 from "../../assets/images/image5.png";
 import Calendar from "../../components/calender/Calender";
 import { AuthContext } from "../../utilities/auth/AuthContext";
 import Reminder from "../reminder/Reminder";
 import moment from "moment-timezone";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Medicine({ navigation }) {
   const [allMedicineData, setAllMedicineData] = useState([]);
   const { userInfo } = useContext(AuthContext);
   const [showReminder, setShowReminder] = useState(false);
   const [reminderData, setReminderData] = useState([]);
+  const [reminderToDelete, setReminderToDelete] = useState(null);
 
-  const getAllMedicine = async () => {
+  const getAllMedicine = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://192.168.8.100:5001/api/medicine"
+        "http://192.168.8.104:5001/api/medicine"
       );
-      const filteredReminderData = getItemsForReminder(response?.data);
+      const filteredReminderData = getItemsForReminder(response.data);
 
-      if (filteredReminderData?.length > 0) {
-        setReminderData(filteredReminderData);
-      }
-      setAllMedicineData(response?.data);
-
-      if (filteredReminderData.length > 0) setShowReminder(true);
+      setReminderData(filteredReminderData);
+      setAllMedicineData(response.data);
+      setShowReminder(filteredReminderData.length > 0);
     } catch (error) {
       console.error("Error fetching medicine data:", error);
     }
-  };
+    console.log("::::::::::::::::::::::::");
+  }, []);
 
+  const getItemsForReminder = useCallback((responseData) => {
+    const timeZone = "Asia/Colombo";
+    const currentTime = moment().tz(timeZone);
 
-  
-  const getItemsForReminder = (responseData) => {
-    if (responseData?.length > 0) {
-      const timeZone = "Asia/Colombo";
-      const currentTime = moment().tz(timeZone);
-
-      const filteredReminderData = responseData.filter((item) => {
+    return responseData
+      .filter((item) => {
         return item.doses.some((dose) => {
-          // Parsing the dose time
           const [time, modifier] = dose.time.split(" ");
-          let [hours, minutes] = time.split(":");
+          let [hours, minutes] = time.split(":").map(Number);
 
-          hours = parseInt(hours);
-          minutes = parseInt(minutes);
-
-          // Handle AM/PM
           if (modifier === "PM" && hours !== 12) {
             hours += 12;
           } else if (modifier === "AM" && hours === 12) {
-            hours = 0; // Handle midnight case (12:00 AM is 00:00 in 24-hour time)
+            hours = 0;
           }
 
-          // Create a moment instance for dose time in the specified time zone
-          const doseTime = moment().tz(timeZone);
-          doseTime.set({ hours, minutes, seconds: 0, milliseconds: 0 });
-
-          // Add 10 minutes to the dose time
+          const doseTime = moment()
+            .tz(timeZone)
+            .set({ hours, minutes, seconds: 0, milliseconds: 0 });
           const tenMinutesLater = doseTime.clone().add(10, "minutes");
 
-          // Compare doseTime with currentTime and tenMinutesLater
           return (
             currentTime.isSameOrAfter(doseTime) &&
             currentTime.isSameOrBefore(tenMinutesLater)
           );
         });
-      });
+      })
+      .flatMap((medicine) =>
+        medicine.doses.map((dose) => ({
+          doseId: dose._id,
+          time: dose.time,
+          medicineId: medicine._id,
+          medicineName: medicine.medicineName,
+        }))
+      );
+  }, []);
 
-      const transformedReminderData =
-        transformReminderData(filteredReminderData);
-      return transformedReminderData;
-    } else {
-      return [];
-    }
-  };
-
-  const transformReminderData = (reminderData) => {
-    // Transform the data
-    const transformedReminderData = reminderData.flatMap((medicine) =>
-      medicine.doses.map((dose) => ({
-        doseId: dose._id,
-        time: dose.time,
-        medicineId: medicine._id,
-        medicineName: medicine.medicineName,
-      }))
-    );
-    return transformedReminderData;
-  };
-
-  useEffect(() => {
+  const handleFocus = useCallback(() => {
+    // Your side effect code here
     getAllMedicine();
   }, []);
 
-  const renderDoseDetails = (doses) => {
-    return doses.map((dose, index) => (
+  useFocusEffect(handleFocus);
+
+  const renderDoseDetails = (doses) =>
+    doses.map((dose, index) => (
       <View key={index} style={styles.doseContainer}>
         <Text style={styles.doseTime}>{dose.time}</Text>
         <Text style={styles.doseMealTiming}>
@@ -113,17 +94,51 @@ export default function Medicine({ navigation }) {
         </Text>
       </View>
     ));
-  };
-
 
   const handleHideReminder = () => {
     setShowReminder(false);
   };
 
+  const handleDeleteMedicine = async (medicineId) => {
+    try {
+      console.log(`Deleting medicine with ID: ${medicineId}`); // Check console log for correct ID
+      await axios.delete(`http://192.168.8.104:5001/api/medicine/${medicineId}`);
+      // Refresh the medicine list after deletion
+      getAllMedicine();
+    } catch (error) {
+      console.error("Error deleting medicine:", error.response ? error.response.data : error.message);
+    }
+  };
+  
+
+  const renderReminderItem = ({ item }) => (
+    <View style={styles.reminderBoxContainer}>
+      <View style={styles.reminderBox}>
+        <View style={styles.imageCircle}>
+          <Image style={styles.image5} resizeMode="contain" source={image5} />
+        </View>
+        <View style={styles.reminderText}>
+          <Text style={styles.pillText}>
+            {item.amount} {item.selectedMedicine}
+          </Text>
+          <Text style={styles.medicineText}>{item.medicineName}</Text>
+          {renderDoseDetails(item.doses)}
+        </View>
+      </View>
+      <TouchableOpacity
+        onPress={() => handleDeleteMedicine(item._id)} // Call the delete function
+        style={styles.deleteIconContainer}
+      >
+        <Icon name="delete" size={24} color="#FF0000" />
+      </TouchableOpacity>
+    </View>
+  );
+  
+
   return !showReminder ? (
     <View style={styles.MedicineContainer}>
       <View style={styles.topText}>
-        <Text style={styles.helloText}> Hello,{userInfo.name}</Text>
+        <Text style={styles.helloText}> Hello, {userInfo.name}</Text>
         <Image style={styles.image2} resizeMode="contain" source={image2} />
       </View>
       <Text style={styles.plainText}>Let's check your plan today</Text>
@@ -140,24 +155,7 @@ export default function Medicine({ navigation }) {
       <FlatList
         data={allMedicineData}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <View style={styles.reminderBox}>
-            <View style={styles.imageCircle}>
-              <Image
-                style={styles.image5}
-                resizeMode="contain"
-                source={image5}
-              />
-            </View>
-            <View style={styles.reminderText}>
-              <Text style={styles.pillText}>
-                {item.amount} {item.selectedMedicine}
-              </Text>
-              <Text style={styles.medicineText}>{item.medicineName}</Text>
-              {renderDoseDetails(item.doses)}
-            </View>
-          </View>
-        )}
+        renderItem={renderReminderItem}
       />
     </View>
   ) : (
@@ -217,14 +215,18 @@ const styles = StyleSheet.create({
     height: 21,
     width: 31,
   },
+  reminderBoxContainer: {
+    position: "relative",
+    marginBottom: 15,
+  },
   reminderBox: {
     backgroundColor: "#D9D9D9",
-    width: "100%",
+    width: "90%",
     borderRadius: 60,
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    marginBottom: 10,
+    padding: 15,
+    position: "relative",
   },
   imageCircle: {
     height: 79,
@@ -254,7 +256,7 @@ const styles = StyleSheet.create({
   doseContainer: {
     marginTop: 4,
     flexDirection: "row",
-    justifyContent: "space-center",
+    justifyContent: "space-between",
   },
   doseTime: {
     fontSize: 16,
@@ -262,8 +264,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   doseMealTiming: {
-    fontSize: 13,
-    color: "#555",
+    fontSize: 16,
+    color: "#000000",
+  },
+  deleteIconContainer: {
+    position: "absolute",
+    right: 10,
+    top: 30,
+    backgroundColor: "#FFFFFF",
+    padding: 2,
+    borderRadius: 50,
   },
 });
-

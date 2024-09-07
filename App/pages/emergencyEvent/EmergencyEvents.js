@@ -3,9 +3,10 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { Feather } from "@expo/vector-icons"; 
 import image8 from "../../assets/images/image8.png"; 
-import { Colors } from "react-native/Libraries/NewAppScreen";
+
 
 const EmergencyEvents = ({ route, navigation }) => {
+  // Get the details from the route params
   const { details } = route.params;
 
   return (
