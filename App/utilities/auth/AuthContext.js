@@ -1,23 +1,35 @@
+
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+// Create an authentication context
 export const AuthContext = createContext();
 
+// Create an authentication provider component
 export const AuthProvider = ({ children }) => {
-  const [userInfo, setUserInfo] = useState({});
+  // Initialize user info and loading state
+  const [userInfo, setUserInfo] = useState(null);  // Better default value
   const [isLoading, setIsLoading] = useState(false);
 
+  // Signup function
   const signup = async (name, email, password) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(
-        "http://192.168.8.100:5001/api/auth/signup",
-        { name, email, password }
-      );
+      const res = await axios.post("http://192.168.8.104:5001/api/auth/signup", {
+        name, email, password
+      });
+
+      // Get user info and token from the response
       let userInfo = res.data.user;
-      setUserInfo(userInfo);
-      await AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+      let token = res.data.token;
+
+      // Store user info and token in state
+      setUserInfo({ ...userInfo, token });
+
+      // Save user info and token to AsyncStorage
+      await AsyncStorage.setItem("userInfo", JSON.stringify({ ...userInfo, token }));
+
       setIsLoading(false);
       return userInfo;
     } catch (e) {
@@ -27,17 +39,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Login function
   const login = async (email, password) => {
     setIsLoading(true);
     try {
-      const res = await axios.post("http://192.168.8.100:5001/api/auth/login", {
-        email,
-        password,
+      const res = await axios.post("http://192.168.8.104:5001/api/auth/login", {
+        email, password
       });
+
+      // Get user info and token from the response
       let userInfo = res.data.user;
-      setUserInfo(userInfo);
-      await AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
-      console.log("UserInfo saved:", userInfo);
+      let token = res.data.token;
+
+      // Store user info and token in state
+      setUserInfo({ ...userInfo, token });
+
+      // Save user info and token to AsyncStorage
+      await AsyncStorage.setItem("userInfo", JSON.stringify({ ...userInfo, token }));
+
       setIsLoading(false);
       return userInfo;
     } catch (e) {
@@ -47,11 +66,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Logout function
   const logout = async () => {
     setIsLoading(true);
     try {
-      await AsyncStorage.removeItem("userInfo"); 
-      setUserInfo({}); 
+      // Clear AsyncStorage
+      await AsyncStorage.removeItem("userInfo");
+
+      // Reset the user info state to null
+      setUserInfo(null);
+      
       setIsLoading(false);
       console.log("User logged out");
     } catch (e) {
@@ -60,20 +84,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Check if the user is logged in
   const isLoggedIn = async () => {
     try {
-      let userInfo = await AsyncStorage.getItem("userInfo");
-      
-      userInfo = JSON.parse(userInfo);
+      // Retrieve stored user info from AsyncStorage
+      let storedUserInfo = await AsyncStorage.getItem("userInfo");
 
-      if (userInfo) {
-        setUserInfo(userInfo);
+      // If user info is found, parse and set it
+      if (storedUserInfo) {
+        setUserInfo(JSON.parse(storedUserInfo));
       }
     } catch (e) {
-      console.log(`is logged in error ${e}`);
+      console.log(`isLoggedIn error: ${e}`);
     }
   };
 
+  // Use effect to check if user is already logged in on app start
   useEffect(() => {
     isLoggedIn();
   }, []);
@@ -84,5 +110,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-
