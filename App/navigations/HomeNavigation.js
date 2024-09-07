@@ -1,3 +1,4 @@
+
 import React, { useContext } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "../pages/login/Login";
@@ -18,15 +19,9 @@ export default function HomeNavigation() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {userInfo.access_token ? (
+      {userInfo && userInfo.token ? ( // Safely check if userInfo and token are present
+        // When the user is logged in, show these screens
         <>
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-        </>
-      ) : (
-        <>
-          
           <Stack.Screen name="Start" component={Start} />
           <Stack.Screen name="RootTabs" component={RootTabs} />
           <Stack.Screen name="Reminder" component={Reminder} />
@@ -34,7 +29,15 @@ export default function HomeNavigation() {
           <Stack.Screen name="CallHelp" component={CallHelp} />
           <Stack.Screen name="MyProgress" component={MyProgress} />
         </>
+      ) : (
+        // When the user is NOT logged in, show these screens
+        <></>
       )}
+      <>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+      </>
     </Stack.Navigator>
   );
 }
