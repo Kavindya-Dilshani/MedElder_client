@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+// import Share from 'react-native-share';
 
 const MyProgress = ({navigation}) => {
   // State to keep track of the selected button
@@ -12,6 +13,17 @@ const MyProgress = ({navigation}) => {
     setSelectedButton(buttonName);
   };
 
+//  // Function to handle share button press
+//  const myCustomShare = async () => {
+//   const shareOptions = {
+//     message: 'Check out my medication progress! Here’s a summary of my medication stats.',
+//   }
+//   try {
+//     const shareResponses= await Share.open(shareOptions);
+//   } catch (error) {
+//     console.error('Error sharing:', error.message);
+//   }
+// };
   return (
     <View style={styles.myProgressContainer}>
       <View style={styles.myProgressHeader}>

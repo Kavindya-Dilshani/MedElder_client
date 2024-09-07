@@ -1,4 +1,3 @@
-
 import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
@@ -11,12 +10,33 @@ import GlobalApi from "../../utilities/GlobalApi";
 import PlaceListView from "../../components/placeListView/PlaceListView";
 import Markers from "../../components/markers/Markers";
 import { SelectMarkerContext } from "../../context/SelectMarkerContext";
+import * as Location from "expo-location";
 
-export default function Location({ searchedLocation }) {
-  const { location, setLocation } = useContext(UserLocationContext);
+const GetLocation = () => {
+  const [userCurrentLocation, setUserCurrentLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [location, setLocation] = useState(null);
   const { userInfo } = useContext(AuthContext);
   const [placeList, setPlaceList] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState([]);
+
+  const getUserCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+
+    const currentLocation = await Location.getCurrentPositionAsync({});
+    setLocation({
+      latitude: currentLocation?.coords?.latitude,
+      longitude: currentLocation?.coords?.longitude,
+    });
+  };
+
+  useEffect(() => {
+    getUserCurrentLocation();
+  }, []);
 
   useEffect(() => {
     if (location?.latitude && location?.longitude) {
@@ -27,7 +47,6 @@ export default function Location({ searchedLocation }) {
   const GetNearBySearchPlace = () => {
     GlobalApi.nearByPlace(location.latitude, location.longitude)
       .then(async (resp) => {
-        console.log(resp.data.results);
         const places = resp.data.results;
         const updatedPlaces = await Promise.all(
           places.map(async (place) => {
@@ -54,7 +73,9 @@ export default function Location({ searchedLocation }) {
 
   return (
     location?.latitude && (
-      <SelectMarkerContext.Provider value={{ selectedMarker, setSelectedMarker }}>
+      <SelectMarkerContext.Provider
+        value={{ selectedMarker, setSelectedMarker }}
+      >
         <View style={styles.mapContainer}>
           <View style={styles.searchContainer}>
             <GooglePlacesAutocomplete
@@ -62,16 +83,17 @@ export default function Location({ searchedLocation }) {
               fetchDetails={true}
               enablePoweredByContainer={false}
               onPress={(data, details = null) => {
-                const location = details?.geometry?.location;
-                if (location) {
+                const updatedLocation = details?.geometry?.location;
+
+                if (updatedLocation) {
                   setLocation({
-                    latitude: location.lat,
-                    longitude: location.lng,
+                    latitude: updatedLocation.lat,
+                    longitude: updatedLocation.lng,
                   });
                 }
               }}
               query={{
-                key: 'AIzaSyCYmVWirR1Tz3ENUdW1OmaZRd0nJ1acVeI',
+                key: "AIzaSyCYmVWirR1Tz3ENUdW1OmaZRd0nJ1acVeI",
                 language: "en",
               }}
               styles={{
@@ -103,12 +125,16 @@ export default function Location({ searchedLocation }) {
               <Markers key={index} index={index} place={item} />
             ))}
           </MapView>
-          {placeList.length > 0 ? <PlaceListView placeList={placeList} /> : null}
+          {placeList.length > 0 ? (
+            <PlaceListView placeList={placeList} />
+          ) : null}
         </View>
       </SelectMarkerContext.Provider>
     )
   );
-}
+};
+
+export default GetLocation;
 
 const styles = StyleSheet.create({
   mapContainer: {
@@ -139,4 +165,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-
