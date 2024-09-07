@@ -15,6 +15,7 @@ import Tablets from "../../assets/images/Tablets.png";
 import Injection from "../../assets/images/Injection.png";
 import Syrup from "../../assets/images/Syrup.png";
 
+// Define the medicines array
 const medicines = [
   {
     id: 1,
@@ -46,8 +47,8 @@ export default function PrimaryMedicineDetails({
   setSelectedMedicine,
   amount,
   setAmount,
-  userId,
 }) {
+  // Function to handle next button press
   const handleNext = async () => {
     if (!medicineName || !selectedMedicine || !amount) {
       Alert.alert("Please fill all the fields");
@@ -57,10 +58,12 @@ export default function PrimaryMedicineDetails({
     }
   };
 
+  // Function to increment amount
   const incrementAmount = () => {
     setAmount(amount + 1);
   };
 
+  // Function to decrement amount
   const decrementAmount = () => {
     if (amount > 0) setAmount(amount - 1);
   };
